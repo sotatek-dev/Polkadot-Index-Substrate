@@ -1278,7 +1278,7 @@ dependencies = [
  "cumulus-client-consensus-common",
  "cumulus-client-network",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "parity-scale-codec",
  "parking_lot 0.12.1",
@@ -1329,7 +1329,7 @@ version = "0.1.0"
 source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
 dependencies = [
  "async-trait",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "dyn-clone",
  "futures 0.3.21",
  "parity-scale-codec",
@@ -1352,7 +1352,7 @@ dependencies = [
  "async-trait",
  "cumulus-client-consensus-common",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "parking_lot 0.12.1",
  "sc-client-api",
@@ -1374,7 +1374,7 @@ version = "0.1.0"
 source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
 dependencies = [
  "async-trait",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "derive_more",
  "futures 0.3.21",
  "futures-timer",
@@ -1399,7 +1399,7 @@ version = "0.1.0"
 source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
 dependencies = [
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "futures-timer",
  "parity-scale-codec",
@@ -1427,7 +1427,7 @@ dependencies = [
  "cumulus-client-consensus-common",
  "cumulus-client-pov-recovery",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "parity-scale-codec",
  "parking_lot 0.12.1",
  "polkadot-overseer",
@@ -1582,7 +1582,7 @@ source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95c
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "cumulus-test-relay-sproof-builder 0.1.0 (git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24)",
  "parity-scale-codec",
  "sc-client-api",
@@ -1631,11 +1631,11 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-inprocess-interface"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
+source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "futures-timer",
  "parking_lot 0.12.1",
@@ -1684,38 +1684,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "cumulus-relay-chain-interface"
-version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
-dependencies = [
- "async-trait",
- "cumulus-primitives-core",
- "derive_more",
- "futures 0.3.21",
- "jsonrpsee-core",
- "parity-scale-codec",
- "parking_lot 0.12.1",
- "polkadot-overseer",
- "polkadot-service",
- "sc-client-api",
- "sc-service",
- "sp-api",
- "sp-blockchain",
- "sp-core",
- "sp-runtime",
- "sp-state-machine",
- "thiserror",
-]
-
-[[package]]
 name = "cumulus-relay-chain-rpc-interface"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
+source = "git+https://github.com/paritytech//cumulus?branch=polkadot-v0.9.24#95ca5a085727c1494ddeeae4a2b2e69c4ee1933b"
 dependencies = [
  "async-trait",
  "backoff",
  "cumulus-primitives-core",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "futures-timer",
  "jsonrpsee",
@@ -6814,7 +6790,7 @@ dependencies = [
  "cumulus-primitives-core",
  "cumulus-primitives-parachain-inherent",
  "cumulus-relay-chain-inprocess-interface",
- "cumulus-relay-chain-interface 0.1.0 (git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.24)",
+ "cumulus-relay-chain-interface",
  "cumulus-relay-chain-rpc-interface",
  "derive_more",
  "dev-runtime",
