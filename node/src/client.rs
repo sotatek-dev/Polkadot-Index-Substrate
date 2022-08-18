@@ -12,6 +12,7 @@ use sp_runtime::{
 };
 use sp_storage::{ChildInfo, StorageData, StorageKey};
 use std::sync::Arc;
+use crate::service::{DevExecutorDispatch};
 
 /// A set of APIs that polkadot-like runtimes must implement.
 pub trait RuntimeApiCollection:
@@ -123,11 +124,11 @@ pub trait ClientHandle {
 /// A client instance of Polkadot.
 #[derive(Clone)]
 pub enum Client {
-	Dev(Arc<crate::service::FullClient<dev_runtime::RuntimeApi>>),
+	Dev(Arc<crate::service::FullClient<dev_runtime::RuntimeApi, DevExecutorDispatch>>),
 	#[cfg(feature = "shot")]
-	Shot(Arc<crate::service::FullClient<shot_runtime::RuntimeApi>>),
+	Shot(Arc<crate::service::FullClient<shot_runtime::RuntimeApi, crate::service::ShotExecutorDispatch>>),
 	#[cfg(feature = "pint")]
-	Pint(Arc<crate::service::FullClient<pint_runtime::RuntimeApi>>),
+	Pint(Arc<crate::service::FullClient<pint_runtime::RuntimeApi, crate::service::PintExecutorDispatch>>),
 }
 
 impl ClientHandle for Client {

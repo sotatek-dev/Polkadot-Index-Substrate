@@ -20,7 +20,7 @@ use sc_chain_spec::ChainSpec;
 use sc_client_api::ExecutorProvider;
 use sc_consensus::LongestChain;
 use sc_consensus_aura::ImportQueueParams;
-use sc_executor::{NativeElseWasmExecutor, WasmExecutor};
+use sc_executor::{NativeElseWasmExecutor, WasmExecutor, NativeExecutionDispatch};
 use sc_network::NetworkService;
 use sc_service::{error::Error as ServiceError, Configuration, PartialComponents, Role, TFullBackend, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
@@ -148,31 +148,32 @@ impl IdentifyVariant for Box<dyn ChainSpec> {
 pub type FullBackend = TFullBackend<Block>;
 
 /// PINT's full client.
-pub type FullClient<RuntimeApi> =
-	sc_service::TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>;
+pub type FullClient<RuntimeApi, ExecutorDispatch> =
+	sc_service::TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<ExecutorDispatch>>;
 
 /// Maybe PINT Dev full select chain.
 type MaybeFullSelectChain = Option<LongestChain<FullBackend, Block>>;
 
-pub fn new_partial<RuntimeApi>(
+pub fn new_partial<RuntimeApi, ExecutorDispatch>(
 	config: &Configuration,
 	dev: bool,
 	instant_sealing: bool,
 ) -> Result<
 	PartialComponents<
-		FullClient<RuntimeApi>,
+		FullClient<RuntimeApi, ExecutorDispatch>,
 		FullBackend,
 		MaybeFullSelectChain,
 		sc_consensus::import_queue::BasicQueue<Block, PrefixedMemoryDB<BlakeTwo256>>,
-		sc_transaction_pool::FullPool<Block, FullClient<RuntimeApi>>,
+		sc_transaction_pool::FullPool<Block, FullClient<RuntimeApi, ExecutorDispatch>>,
 		(Option<Telemetry>, Option<TelemetryWorkerHandle>),
 	>,
 	sc_service::Error,
 >
 where
-	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
+	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi, ExecutorDispatch>> + Send + Sync + 'static,
 	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
+	ExecutorDispatch: NativeExecutionDispatch + 'static,
 {
 	let telemetry = config
 		.telemetry_endpoints
@@ -185,11 +186,11 @@ where
 		})
 		.transpose()?;
 
-	let executor = WasmExecutor::<HostFunctions>::new(
+	let executor = NativeElseWasmExecutor::<ExecutorDispatch>::new(
 		config.wasm_method,
 		config.default_heap_pages,
 		config.max_runtime_instances,
-		None,
+		// None,
 		config.runtime_cache_size,
 	);
 
@@ -341,35 +342,36 @@ async fn build_relay_chain_interface(
 /// This is the actual implementation that is abstract over the executor and the
 /// runtime api.
 #[sc_tracing::logging::prefix_logs_with("Parachain")]
-async fn start_node_impl<RB, RuntimeApi, BIC>(
+async fn start_node_impl<RB, RuntimeApi, BIC, ExecutorDispatch>(
 	parachain_config: Configuration,
 	polkadot_config: Configuration,
 	collator_options: CollatorOptions,
 	id: ParaId,
 	_rpc_ext_builder: RB,
 	build_consensus: BIC,
-) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi>>)>
+) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi, ExecutorDispatch>>)>
 where
 	RB: Fn(
-			Arc<FullClient<RuntimeApi>>,
+			Arc<FullClient<RuntimeApi, ExecutorDispatch>>,
 		// ) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
 		) -> Result<RpcModule<()>, sc_service::Error>
 		+ Send
 		+ 'static,
-	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
+	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi, ExecutorDispatch>> + Send + Sync + 'static,
 	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
 	BIC: FnOnce(
-		Arc<FullClient<RuntimeApi>>,
+		Arc<FullClient<RuntimeApi, ExecutorDispatch>>,
 		Option<&Registry>,
 		Option<TelemetryHandle>,
 		&TaskManager,
 		Arc<dyn RelayChainInterface>,
-		Arc<sc_transaction_pool::FullPool<Block, FullClient<RuntimeApi>>>,
+		Arc<sc_transaction_pool::FullPool<Block, FullClient<RuntimeApi, ExecutorDispatch>>>,
 		Arc<NetworkService<Block, Hash>>,
 		SyncCryptoStorePtr,
 		bool,
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
+	ExecutorDispatch: sc_service::NativeExecutionDispatch + 'static
 {
 	if matches!(parachain_config.role, Role::Light) {
 		return Err("Light client not supported!".into());
@@ -514,16 +516,17 @@ where
 }
 
 /// Start a normal parachain node.
-pub async fn start_node<RuntimeApi>(
+pub async fn start_node<RuntimeApi, ExecutorDispatch>(
 	parachain_config: Configuration,
 	polkadot_config: Configuration,
 	collator_options: CollatorOptions,
 	id: ParaId,
-) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi>>)>
+) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi, ExecutorDispatch>>)>
 where
-	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
+	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi, ExecutorDispatch>> + Send + Sync + 'static,
 	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
+	ExecutorDispatch: sc_service::NativeExecutionDispatch + 'static
 {
 	start_node_impl(
 		parachain_config,
@@ -659,7 +662,7 @@ fn inner_pint_dev(config: Configuration, instant_sealing: bool) -> Result<TaskMa
 		select_chain: maybe_select_chain,
 		transaction_pool,
 		other: (mut telemetry, _),
-	} = new_partial::<dev_runtime::RuntimeApi>(&config, true, instant_sealing)?;
+	} = new_partial::<dev_runtime::RuntimeApi, DevExecutorDispatch>(&config, true, instant_sealing)?;
 
 	let (network, system_rpc_tx, network_starter) = sc_service::build_network(sc_service::BuildNetworkParams {
 		config: &config,

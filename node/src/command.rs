@@ -321,11 +321,19 @@ pub fn run() -> Result<()> {
 							}
 						}
 						BenchmarkCmd::Block(cmd) => runner.sync_run(|config| {
-							let partials = new_partial::<RuntimeApi>(&config, true, false)?;
+							let partials = new_partial::<RuntimeApi, crate::service::DevExecutorDispatch>(&config, true, false)?;
+							#[cfg(feature = "pint")]
+							let partials = new_partial::<RuntimeApi, crate::service::PintExecutorDispatch>(&config, true, false)?;
+							#[cfg(feature = "shot")]
+							let partials = new_partial::<RuntimeApi, crate::service::ShotExecutorDispatch>(&config, true, false)?;
 							cmd.run(partials.client)
 						}),
 						BenchmarkCmd::Storage(cmd) => runner.sync_run(|config| {
-							let partials = new_partial::<RuntimeApi>(&config, true, false)?;
+							let partials = new_partial::<RuntimeApi, crate::service::DevExecutorDispatch>(&config, true, false)?;
+							#[cfg(feature = "pint")]
+							let partials = new_partial::<RuntimeApi, crate::service::PintExecutorDispatch>(&config, true, false)?;
+							#[cfg(feature = "shot")]
+							let partials = new_partial::<RuntimeApi, crate::service::ShotExecutorDispatch>(&config, true, false)?;
 							let db = partials.backend.expose_db();
 							let storage = partials.backend.expose_storage();
 
@@ -384,7 +392,7 @@ pub fn run() -> Result<()> {
 
 				with_runtime!(config.chain_spec, {
 					{
-						service::start_node::<RuntimeApi>(config, polkadot_config, collator_options, id)
+						service::start_node::<RuntimeApi, crate::service::DevExecutorDispatch>(config, polkadot_config, collator_options, id)
 							.await
 							.map(|r| r.0)
 							.map_err(Into::into)
