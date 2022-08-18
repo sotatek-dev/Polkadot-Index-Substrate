@@ -506,21 +506,8 @@ impl pallet_price_feed::Config for Runtime {
 	type AssetId = AssetId;
 	type Time = Timestamp;
 	type Event = Event;
+	type DataProvider = OrmlOracle;
 	type WeightInfo = weights::pallet_price_feed::WeightInfo<Runtime>;
-}
-
-impl pallet_chainlink_feed::Config for Runtime {
-	type Event = Event;
-	type FeedId = FeedId;
-	type Value = Value;
-	type Currency = Balances;
-	type PalletId = FeedPalletId;
-	type MinimumReserve = MinimumReserve;
-	type StringLimit = StringLimit;
-	type OracleCountLimit = OracleLimit;
-	type FeedLimit = FeedLimit;
-	type OnAnswerHandler = PriceFeed;
-	type WeightInfo = ();
 }
 
 /// Range of lockup period
@@ -849,7 +836,6 @@ construct_runtime!(
 		SaftRegistry: pallet_saft_registry::{Pallet, Call, Storage, Event<T>} = 84,
 		RemoteAssetManager: pallet_remote_asset_manager::{Pallet, Call, Storage, Event<T>, Config<T>} = 85,
 		PriceFeed: pallet_price_feed::{Pallet, Call, Storage, Event<T>} = 86,
-		ChainlinkFeed: pallet_chainlink_feed::{Pallet, Call, Storage, Event<T>, Config<T>} = 90,
 		OrmlOracle: orml_oracle::<Instance1> = 91,
 		OracleOperatorMembership: pallet_membership::<Instance5> = 92,
 

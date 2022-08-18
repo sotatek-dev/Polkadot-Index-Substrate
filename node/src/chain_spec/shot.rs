@@ -111,11 +111,6 @@ fn pint_testnet_genesis(
 		balances: BalancesConfig { balances: vec![(root_key.clone(), 1 << 60)] },
 		treasury: Default::default(),
 		committee: CommitteeConfig { council_members: council_members.clone(), ..Default::default() },
-		chainlink_feed: ChainlinkFeedConfig {
-			feeds: Default::default(),
-			pallet_admin: Some(root_key.clone()),
-			feed_creators: council_members,
-		},
 		sudo: SudoConfig { key: Some(root_key) },
 		parachain_info: ParachainInfoConfig { parachain_id: id },
 		collator_selection: CollatorSelectionConfig {
