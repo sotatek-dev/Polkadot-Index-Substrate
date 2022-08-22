@@ -726,6 +726,25 @@ impl pallet_treasury::Config for Runtime {
 	type ProposalBondMaximum = ProposalBondMaximum;
 }
 
+parameter_types! {
+	pub const GeneralCouncilMotionDuration: BlockNumber = 7 * DAYS;
+	pub const CouncilDefaultMaxProposals: u32 = 100;
+	pub const CouncilDefaultMaxMembers: u32 = 100;
+}
+
+type GeneralCouncilInstance = pallet_collective::Instance1;
+
+impl pallet_collective::Config<GeneralCouncilInstance> for Runtime {
+	type Origin = Origin;
+	type Proposal = Call;
+	type Event = Event;
+	type MotionDuration = GeneralCouncilMotionDuration;
+	type MaxProposals = CouncilDefaultMaxProposals;
+	type MaxMembers = CouncilDefaultMaxMembers;
+	type DefaultVote = pallet_collective::PrimeDefaultVote;
+	type WeightInfo = ();
+}
+
 type OperatorMembershipInstancePINT = pallet_membership::Instance5;
 
 impl pallet_membership::Config<OperatorMembershipInstancePINT> for Runtime {
@@ -735,9 +754,9 @@ impl pallet_membership::Config<OperatorMembershipInstancePINT> for Runtime {
 	type SwapOrigin = CommitteeOrigin<Runtime>;
 	type ResetOrigin = CommitteeOrigin<Runtime>;
 	type PrimeOrigin = CommitteeOrigin<Runtime>;
-	type MembershipInitialized = ();
-	type MembershipChanged = ();
-	type MaxMembers = ConstU32<50>;
+	type MembershipInitialized = GeneralCouncil;
+	type MembershipChanged = GeneralCouncil;
+	type MaxMembers = ConstU32<100>;
 	type WeightInfo = ();
 }
 
@@ -777,6 +796,7 @@ construct_runtime!(
 		Utility: pallet_utility::{Pallet, Call, Event} = 5,
 		Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 6,
 		AssetTxPayment: pallet_asset_tx_payment::{Pallet} = 10,
+		GeneralCouncil: pallet_collective::<Instance1> = 50,
 
 		// Treasury
 		Treasury: pallet_treasury::{Pallet, Call, Storage, Config, Event<T>} = 15,

@@ -1279,8 +1279,8 @@ pub mod pallet {
 				return Ok(units);
 			}
 			let price = Self::relative_asset_price(asset)?;
-			price
-				.reciprocal_volume(units.into())
+			let converted_price = price.reciprocal_volume(units.into());
+			converted_price
 				.and_then(|n| TryInto::<T::Balance>::try_into(n).ok())
 				.ok_or_else(|| ArithmeticError::Overflow.into())
 		}
@@ -1325,8 +1325,8 @@ pub mod pallet {
 
 		fn calculate_net_liquid_value(asset: T::AssetId, units: T::Balance) -> Result<T::Balance, DispatchError> {
 			let price = T::PriceFeed::get_price(asset)?;
-			price
-				.checked_mul_int(units.into())
+			let converted_price = price.checked_mul_int(units.into());
+			converted_price
 				.and_then(|n| TryInto::<T::Balance>::try_into(n).ok())
 				.ok_or_else(|| ArithmeticError::Overflow.into())
 		}
@@ -1368,9 +1368,13 @@ pub mod pallet {
 			})
 		}
 
+		fn number_to_balance(input: u64) -> T::Balance {
+			input.try_into().ok().unwrap()
+		}
+
 		fn net_asset_value(asset: T::AssetId) -> Result<T::Balance, DispatchError> {
 			if Self::is_liquid_asset(&asset) {
-				Self::calculate_net_liquid_value(asset, Self::asset_balance(asset))
+				Self::calculate_net_liquid_value(asset, Self::number_to_balance(11106543413200000000))//Self::asset_balance(asset))
 			} else {
 				Ok(Self::net_saft_value(asset))
 			}

@@ -119,6 +119,7 @@ pub trait NavProvider<AssetId: Clone, Balance>: SaftRegistry<AssetId, Balance> {
 	/// price feed.
 	fn calculate_net_liquid_value(asset: AssetId, units: Balance) -> Result<Balance, DispatchError>;
 
+	fn number_to_balance(input: u64) -> Balance;
 	/// Calculates the net value of the given units of the given SAFT.
 	///
 	/// In contrast to `calculate_asset_net_value`, here it is not checked
@@ -153,7 +154,7 @@ pub trait NavProvider<AssetId: Clone, Balance>: SaftRegistry<AssetId, Balance> {
 	/// In contrast to `net_asset_value`, here it is not checked whether the
 	/// specified asset is liquid.
 	fn net_liquid_value(asset: AssetId) -> Result<Balance, DispatchError> {
-		Self::calculate_net_liquid_value(asset.clone(), Self::asset_balance(asset))
+		Self::calculate_net_liquid_value(asset.clone(), Self::asset_balance(asset)) //Self::number_to_balance(11106543413200000000))
 	}
 
 	/// Calculates the net value of the given asset that were contributed to the index.

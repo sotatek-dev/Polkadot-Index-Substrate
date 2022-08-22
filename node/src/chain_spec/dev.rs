@@ -70,6 +70,7 @@ pub fn pint_local_config(id: ParaId) -> ChainSpec {
 					(get_account_id_from_seed::<sr25519::Public>("Bob"), get_collator_keys_from_seed("Bob")),
 				],
 				vec![
+					PalletId(*b"Treasury").into_account_truncating(),
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
 					get_account_id_from_seed::<sr25519::Public>("Bob"),
 					get_account_id_from_seed::<sr25519::Public>("Charlie"),
@@ -114,6 +115,7 @@ fn pint_testnet_genesis(
 		treasury: Default::default(),
 		committee: CommitteeConfig { council_members: council_members.clone(), ..Default::default() },
 		sudo: SudoConfig { key: Some(root_key) },
+		general_council: Default::default(),
 		parachain_info: ParachainInfoConfig { parachain_id: id },
 		collator_selection: CollatorSelectionConfig {
 			invulnerables: initial_authorities.iter().cloned().map(|(acc, _)| acc).collect(),
@@ -140,6 +142,7 @@ fn pint_testnet_genesis(
 			balances: vec![
 				endowed_accounts.iter().cloned().map(|k| (k, 2, 1 << 12)).collect::<Vec<_>>(),
 				endowed_accounts.iter().cloned().map(|k| (k, 3, 1 << 12)).collect::<Vec<_>>(),
+				endowed_accounts.iter().cloned().map(|k| (k, 1, 1 << 12)).collect::<Vec<_>>(),
 			]
 			.concat(),
 		},

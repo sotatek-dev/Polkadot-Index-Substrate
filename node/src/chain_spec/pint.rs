@@ -113,6 +113,7 @@ fn pint_testnet_genesis(
 		treasury: Default::default(),
 		committee: CommitteeConfig { council_members: council_members.clone(), ..Default::default() },
 		sudo: SudoConfig { key: Some(root_key) },
+		general_council: Default::default(),
 		parachain_info: ParachainInfoConfig { parachain_id: id },
 		collator_selection: CollatorSelectionConfig {
 			invulnerables: initial_authorities.iter().cloned().map(|(acc, _)| acc).collect(),
