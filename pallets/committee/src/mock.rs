@@ -13,7 +13,7 @@ use frame_support::{
 		testing::Header,
 		traits::{BlakeTwo256, IdentityLookup},
 	},
-	traits::{OnFinalize, OnInitialize},
+	traits::{OnFinalize, OnInitialize, EnsureOneOf},
 };
 use frame_system::{self as system, EnsureSignedBy};
 
@@ -92,7 +92,7 @@ ord_parameter_types! {
 }
 
 type EnsureApprovedByCommittee =
-	frame_system::EnsureOneOf<AccountId, frame_system::EnsureRoot<AccountId>, crate::EnsureApprovedByCommittee<Test>>;
+	EnsureOneOf<frame_system::EnsureRoot<AccountId>, crate::EnsureApprovedByCommittee<Test>>;
 
 pub struct VotingPeriodRange<T>(PhantomData<T>);
 
