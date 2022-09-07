@@ -18,11 +18,14 @@ scale-info = { version = "2.0.1", default-features = false, features = ["derive"
 frame-support = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.24', default-features = false }
 frame-system = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.24', default-features = false }
 frame-benchmarking = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.24', default-features = false, optional = true }
+pallet-membership = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+pallet-collective = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
 
 # PINT dependencies
 primitives = { path = "../../primitives/primitives", default-features = false }
 orml-oracle = { git = 'https://github.com/open-web3-stack/open-runtime-module-library', branch = 'polkadot-v0.9.24', default-features = false }
 orml-traits = { git = 'https://github.com/open-web3-stack/open-runtime-module-library', branch = 'polkadot-v0.9.24', default-features = false }
+pallet-committee = {path = '../../pallets/committee', default-features = false }
 
 [dev-dependencies]
 serde = "1.0.130"
@@ -46,11 +49,13 @@ std = [
     'sp-io/std',
     'sp-runtime/std',
 	'orml-oracle/std',
+    'pallet-committee/std',
 ]
 runtime-benchmarks = [
     'frame-benchmarking',
     'frame-support/runtime-benchmarks',
     'primitives/runtime-benchmarks',
+    'pallet-committee/runtime-benchmarks',
 ]
 
 [package.metadata.docs.rs]
